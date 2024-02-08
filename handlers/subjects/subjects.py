@@ -6,7 +6,7 @@ from functions.btns import create_btns
 
 @dp.callback_query_handler(text=['Subjects_Show'], state='*')
 async def subjects_show(callback: types.CallbackQuery | types.Message):
-	subjects = await db.fetchall("SELECT key,name FROM subjects", is_dict=True)
+	subjects = await db.fetchall("SELECT key,name FROM subjects WHERE view = 1", is_dict=True)
 	btns = []
 	for subject in subjects:
 		btns.append(
@@ -29,10 +29,10 @@ async def subjects_delete(callback:types.CallbackQuery):
 	key = split[2].lower()
 
 	if key != 'show':
-		await db.execute("DELETE FROM subjects WHERE key = ?", (key,))
+		await db.execute("UPDATE subjects SET view = 0 WHERE key = ?", (key,))
 		await db.commit()
 
-	subjects = await db.fetchall("SELECT key,name FROM subjects", is_dict=True)
+	subjects = await db.fetchall("SELECT key,name FROM subjects WHERE view = 1", is_dict=True)
 	btns = []
 	for subject in subjects:
 		btns.append(

@@ -31,7 +31,7 @@ async def select_date(callback:types.CallbackQuery):
 	split = callback.data.split('_')
 	date = split[3]
 
-	subjects = await db.fetchall("SELECT key,name FROM subjects", is_dict=True)
+	subjects = await db.fetchall("SELECT key,name FROM subjects WHERE view = 1", is_dict=True)
 	btns = [
 		types.InlineKeyboardButton(subject['name'],
 								 callback_data=f"Lessons_Create_SelectSubject_{date}_{subject['key']}")
@@ -55,9 +55,10 @@ async def select_subject(callback:types.CallbackQuery):
 	# Запрос на поиск всех учителей с таким предметом, и что бы за эту дату у них было меньше 5 уроков
 
 	teachers = await db.fetchall("SELECT teachers.name,teachers.key FROM teachers "
-						  		 "WHERE (SELECT count(*) FROM lessons WHERE lessons.date_lesson = ? "
+						  		 "WHERE (SELECT count(*) FROM lessons WHERE lessons.date_lesson = ? AND lessons.view = 1 "
 								 "AND lessons.teacher = teachers.key) < 5 "
-						  	     "AND teachers.subject = ?", (date, subject,), is_dict=True)
+						  	     "AND teachers.subject = ?"
+								 "AND teachers.view = 1", (date, subject,), is_dict=True)
 	btns = [
 		types.InlineKeyboardButton(teacher['teachers_name'],
 								 callback_data=f"Lessons_Create_SelectTeacher_{date}_{subject}_{teacher['teachers_key']}")

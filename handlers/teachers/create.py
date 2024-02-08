@@ -9,7 +9,7 @@ from other.states import Teachers
 
 @dp.callback_query_handler(text_startswith=['Teachers_Create_Show'], state='*')
 async def teacher_create(callback:types.CallbackQuery):
-	subjects = await db.fetchall("SELECT key,name FROM subjects", is_dict=True)
+	subjects = await db.fetchall("SELECT key,name FROM subjects WHERE view = 1", is_dict=True)
 	btns = []
 	for subject in subjects:
 		btns.append(

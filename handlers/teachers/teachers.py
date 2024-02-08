@@ -6,7 +6,7 @@ from functions.btns import create_btns
 
 @dp.callback_query_handler(text=['Teachers_Show'], state='*')
 async def teachers_show(callback: types.CallbackQuery | types.Message):
-	teachers = await db.fetchall("SELECT key,name FROM teachers", is_dict=True)
+	teachers = await db.fetchall("SELECT key,name FROM teachers WHERE view = 1", is_dict=True)
 	btns = []
 	for teacher in teachers:
 		btns.append(
@@ -29,10 +29,10 @@ async def teachers_delete(callback:types.CallbackQuery):
 	key = split[2].lower()
 
 	if key != 'show':
-		await db.execute("DELETE FROM teachers WHERE key = ?", (key,))
+		await db.execute("UPDATE teachers SET view = 0 WHERE key = ?", (key,))
 		await db.commit()
 
-	teachers = await db.fetchall("SELECT key,name FROM teachers", is_dict=True)
+	teachers = await db.fetchall("SELECT key,name FROM teachers WHERE view = 1", is_dict=True)
 	btns = []
 	for teacher in teachers:
 		btns.append(

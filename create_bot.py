@@ -14,19 +14,24 @@ start_sql_request = """
 CREATE TABLE IF NOT EXISTS subjects ( -- Таблица с предметами
     key  INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
-    date INTEGER);
+    date INTEGER,
+    view INTEGER DEFAULT (1)
+);
 CREATE TABLE IF NOT EXISTS lessons ( -- Таблица с уроками
     key         INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT,
     teacher     INTEGER,
     date_lesson TEXT,
-    date_add    INTEGER
+    date_add    INTEGER,
+    cabinet 	INTEGER,
+    view	    INTEGER DEFAULT (1)
 );
 CREATE TABLE IF NOT EXISTS teachers ( -- Таблица с учителями
     key     INTEGER PRIMARY KEY AUTOINCREMENT,
     name    TEXT,
     subject INTEGER,
-    date    INTEGER
+    date    INTEGER,
+    view	INTEGER DEFAULT (1)
 );
 
 CREATE TABLE IF NOT EXISTS settings ( -- Таблица с настройками

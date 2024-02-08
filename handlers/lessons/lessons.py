@@ -12,7 +12,8 @@ async def lessons_show(callback: types.CallbackQuery | types.Message):
 	lessons = await db.fetchall("SELECT lessons.key,teachers.name,subjects.name,lessons.cabinet FROM lessons "
 								"LEFT JOIN teachers ON teachers.key = lessons.teacher "
 								"LEFT JOIN subjects ON subjects.key = teachers.subject "
-								"WHERE lessons.date_lesson = ?",
+								"WHERE lessons.date_lesson = ? "
+								"AND teachers.view = 1 AND subjects.view = 1 AND lessons.view = 1",
 								(datetime.date.today(),),
 								is_dict=True)
 
@@ -40,14 +41,17 @@ async def lessons_delete(callback:types.CallbackQuery):
 	key = split[2].lower()
 
 	if key != 'show':
-		await db.execute("DELETE FROM lessons WHERE key = ?", (key,))
+		await db.execute("UPDATE lessons SET view = 0 WHERE key = ?", (key,))
 		await db.commit()
 
-	lessons = await db.fetchall("SELECT key,name FROM lessons", is_dict=True)
+	lessons = await db.fetchall("SELECT lessons.key,subjects.name FROM lessons "
+								"LEFT JOIN teachers ON lessons.teacher = teachers.key "
+								"LEFT JOIN subjects ON subjects.key = teachers.subject "
+								"WHERE lessons.view = 1 AND subjects.view = 1 AND teachers.view = 1", is_dict=True)
 	btns = []
 	for lesson in lessons:
 		btns.append(
-			types.InlineKeyboardButton(f"{lesson['name']}", callback_data=f"Lessons_Delete_{lesson['key']}")
+			types.InlineKeyboardButton(f"{lesson['subjects_name']}", callback_data=f"Lessons_Delete_{lesson['lessons_key']}")
 		)
 	reply_markup = await create_btns(btns, 2)
 	reply_markup.add(

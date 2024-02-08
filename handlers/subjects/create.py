@@ -8,7 +8,7 @@ async def subject_create(callback:types.CallbackQuery):
 	await Subjects.Create.name.set()
 
 	reply_markup = types.InlineKeyboardMarkup(row_width=2).add(
-		types.InlineKeyboardButton(f"🔙 Вернуться назад", callback_data=f"Subjects_Create_Show"),
+		types.InlineKeyboardButton(f"🔙 Вернуться назад", callback_data=f"Subjects_Show"),
 	)
 
 	await callback.message.edit_text("📚 Создание предмета\n\n"
